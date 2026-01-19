@@ -1,0 +1,7 @@
+django
+djangorestframework
+django-cors-headers
+openai-whisper
+torch
+imageio-ffmpeg
+python-multipart

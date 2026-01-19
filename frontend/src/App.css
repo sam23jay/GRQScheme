@@ -1,0 +1,107 @@
+#root {
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.video-container {
+  margin-top: 2rem;
+  position: relative;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  background: #000;
+}
+
+video {
+  width: 100%;
+  display: block;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25em 0.75em;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  text-transform: capitalize;
+}
+
+.status-pending {
+  background: #334155;
+  color: #94a3b8;
+}
+
+.status-processing {
+  background: #0f766e;
+  color: #5eead4;
+  animation: pulse 2s infinite;
+}
+
+.status-completed {
+  background: #059669;
+  color: #6ee7b7;
+}
+
+.status-failed {
+  background: #991b1b;
+  color: #fca5a5;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.upload-area {
+  margin: 2rem 0;
+}
+
+.error-msg {
+  color: #ef4444;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
