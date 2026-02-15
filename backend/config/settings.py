@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     # Local apps
     'apps.videos',
+    'apps.tts',
 ]
 
 MIDDLEWARE = [
@@ -59,6 +60,7 @@ MIDDLEWARE = [
 
 # CORS Settings
 CORS_ALLOW_ALL_ORIGINS = True # For development only
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'config.urls'
 

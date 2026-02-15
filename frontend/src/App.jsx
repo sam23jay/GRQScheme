@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import axios from 'axios'
+import TTSGenerator from './components/TTSGenerator'
 import './App.css'
 
 const API_BASE = 'http://127.0.0.1:8000/api'
@@ -10,6 +11,8 @@ function App() {
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState(null)
   const fileInputRef = useRef(null)
+
+  const [activeTab, setActiveTab] = useState('captioning')
 
   // Poll for status updates
   useEffect(() => {
@@ -82,85 +85,108 @@ function App() {
 
   return (
     <div className="card">
-      <h1>AI Caption Generator</h1>
-      <p style={{ opacity: 0.7, marginBottom: '2rem' }}>
-        Upload a video to automatically generate captions using OpenAI Whisper.
-      </p>
-
-      <div className="upload-area">
-        <label className="custom-file-upload">
-          <input
-            type="file"
-            accept="video/*"
-            onChange={handleFileChange}
-            ref={fileInputRef}
-          />
-          {file ? file.name : "Select Video File"}
-        </label>
-
-        <div style={{ marginTop: '1rem' }}>
-          <button
-            onClick={handleUpload}
-            disabled={!file || uploading}
-          >
-            {uploading ? 'Uploading...' : 'Upload & Process'}
-          </button>
-        </div>
-
-        {error && <div className="error-msg">{error}</div>}
+      <div className="tabs" style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem', gap: '1rem' }}>
+        <button
+          className={activeTab === 'captioning' ? 'active-tab' : ''}
+          onClick={() => setActiveTab('captioning')}
+          style={{ opacity: activeTab === 'captioning' ? 1 : 0.6 }}
+        >
+          Video Captioning
+        </button>
+        <button
+          className={activeTab === 'tts' ? 'active-tab' : ''}
+          onClick={() => setActiveTab('tts')}
+          style={{ opacity: activeTab === 'tts' ? 1 : 0.6 }}
+        >
+          Text to Speech
+        </button>
       </div>
 
-      {videoData && (
-        <div className="result-area">
-          <h3>Status: <span className={`status-badge status-${videoData.status}`}>{videoData.status}</span></h3>
+      {activeTab === 'captioning' ? (
+        <>
+          <h1>AI Caption Generator</h1>
+          <p style={{ opacity: 0.7, marginBottom: '2rem' }}>
+            Upload a video to automatically generate captions using OpenAI Whisper.
+          </p>
 
-          {videoData.status === 'processing' && (
-            <p className="animate-pulse">Analyzing audio and generating captions...</p>
-          )}
+          <div className="upload-area">
+            <label className="custom-file-upload">
+              <input
+                type="file"
+                accept="video/*"
+                onChange={handleFileChange}
+                ref={fileInputRef}
+              />
+              {file ? file.name : "Select Video File"}
+            </label>
 
-          {videoData.status === 'completed' && (
-            <div className="video-container">
-              <video
-                key={videoData.processed_video_file || videoData.video_file}
-                controls
-                width="100%"
-                crossOrigin="anonymous"
-                src={videoData.processed_video_file ? videoData.processed_video_file : videoData.video_file}
+            <div style={{ marginTop: '1rem' }}>
+              <button
+                onClick={handleUpload}
+                disabled={!file || uploading}
               >
-                {!videoData.processed_video_file && videoData.srt_content && (
-                  <track
-                    kind="captions"
-                    src={getCaptionsSrc()}
-                    srcLang="en"
-                    label="English"
-                    default
-                  />
-                )}
-                Your browser does not support the video tag.
-              </video>
+                {uploading ? 'Uploading...' : 'Upload & Process'}
+              </button>
+            </div>
 
-              {videoData.processed_video_file && (
-                <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-                  <a
-                    href={videoData.processed_video_file}
-                    download
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{ textDecoration: 'none' }}
+            {error && <div className="error-msg">{error}</div>}
+          </div>
+
+          {videoData && (
+            <div className="result-area">
+              <h3>Status: <span className={`status-badge status-${videoData.status}`}>{videoData.status}</span></h3>
+
+              {videoData.status === 'processing' && (
+                <p className="animate-pulse">Analyzing audio and generating captions...</p>
+              )}
+
+              {videoData.status === 'completed' && (
+                <div className="video-container">
+                  <video
+                    key={videoData.processed_video_file || videoData.video_file}
+                    controls
+                    width="100%"
+                    crossOrigin="anonymous"
+                    src={videoData.processed_video_file ? videoData.processed_video_file : videoData.video_file}
                   >
-                    <button style={{ backgroundColor: '#059669' }}>
-                      Download w/ Captions
-                    </button>
-                  </a>
+                    {!videoData.processed_video_file && videoData.srt_content && (
+                      <track
+                        kind="captions"
+                        src={getCaptionsSrc()}
+                        srcLang="en"
+                        label="English"
+                        default
+                      />
+                    )}
+                    Your browser does not support the video tag.
+                  </video>
+
+                  {videoData.processed_video_file && (
+                    <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                      <a
+                        href={videoData.processed_video_file}
+                        download
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ textDecoration: 'none' }}
+                      >
+                        <button style={{ backgroundColor: '#059669' }}>
+                          Download w/ Captions
+                        </button>
+                      </a>
+                    </div>
+                  )}
                 </div>
+              )}
+
+              {videoData.error_message && (
+                <div className="error-msg">Error: {videoData.error_message}</div>
               )}
             </div>
           )}
-
-          {videoData.error_message && (
-            <div className="error-msg">Error: {videoData.error_message}</div>
-          )}
-        </div>
+        </>
+      ) : (
+        <TTSGenerator apiBase={API_BASE} />
       )}
     </div>
   )
